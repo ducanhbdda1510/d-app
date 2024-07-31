@@ -1,0 +1,11 @@
+{
+	"shared": {
+		"eth": {
+			"mainnet": {
+				"jsonRpc": [
+					"2a270e02685144fdb052bc4a6dc4d034"
+				]
+			}
+		}
+	}
+}
