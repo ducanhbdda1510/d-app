@@ -1,43 +1,61 @@
-
-import './App.css'
-import { walletCsvWriter, walletCsvWriterMapping } from './utils/csv'
-import { randomMetamaskWallet } from './utils/etherum';
+import { useState } from "react";
+import "./App.css";
+import { walletCsvWriterMapping, WalletInfo } from "./utils/csv";
+import { randomMetamaskWallet } from "./utils/etherum";
+import { CSVLink } from "react-csv";
 
 function App() {
-
+  const [wallets, setWallets] = useState<WalletInfo[]>([]);
   const generate100WalletAndWriteCsv = () => {
-    const wallets = Array(100)
-    .fill(1)
-    .map(randomMetamaskWallet)
-    .map(walletCsvWriterMapping);
+    const mappedWallets = Array(30)
+      .fill(1)
+      .map(randomMetamaskWallet)
+      .map(walletCsvWriterMapping);
+    
+      setWallets(mappedWallets);
+  };
 
-    return walletCsvWriter(wallets)
-  }
+  const renderWalletRowTable = (wallet: WalletInfo, key: string) => {
+    return (
+      <tr key={key + wallet.address}>
+        <td>{key}</td>
+        <td>{wallet.address}</td>
+        <td>{wallet.privateKey}</td>
+        <td>{wallet.phrase}</td>
+      </tr>
+    );
+  };
+
+  const renderWalletInfo = (wallets: WalletInfo[]) => {
+    return (
+      <>
+        <div className="card">
+          <table style={{ width: "max-content" }}>
+            <tr>
+              <th>No</th>
+              <th>Address</th>
+              <th>Private Key</th>
+              <th>Phrase</th>
+            </tr>
+            {wallets.map((w, i) => renderWalletRowTable(w, i + ""))}
+          </table>
+        </div>
+        <p className="read-the-docs">
+          <CSVLink data={wallets}>Click here to download</CSVLink>
+        </p>
+      </>
+    );
+  };
 
   return (
     <>
       <div>
-        {/* <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a> */}
+        <h1>Metamask</h1>
+        <button onClick={generate100WalletAndWriteCsv}>generate Wallet</button>
       </div>
-      <h1>Metamask</h1>
-      <div className="card">
-        <button onClick={generate100WalletAndWriteCsv}>
-          generate Wallet
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMRyarn 
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {wallets.length > 0 && renderWalletInfo(wallets)}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
